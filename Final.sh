@@ -50,11 +50,6 @@ ls -l "$0" | awk '{print $1}'
 
 echo ""
 
-sudo apt update
-sudo apt install git -y
-
-echo ""
-
 # 2. Write the commands to do the following filesystem operations (150
 #    points)
 
@@ -107,6 +102,7 @@ echo ""
 #    Print the current ACL for alice.txt and run cat on alice.txt from bob's
 #    profile (70 points)
 
+sudo apt update
 sudo apt install acl -y
 
 echo ""
@@ -121,9 +117,49 @@ sudo -u bob cat /home/alice/alice.txt
 
 echo ""
 
+# 3. Initialize /home/alice/docker_test as a git repository and do the following
+#    (50 points)
 
+sudo apt install git -y
 
+echo ""
 
+sudo chown -R alice:test_users /home/alice/docker_test
+
+sudo -u alice bash << 'EOF'
+cd /home/alice/docker_test
+
+git init
+
+touch Dockerfile
+
+echo 'FROM ubuntu:latest' > Dockerfile
+echo 'RUN apt-get update && apt-get install -y nginx' >> Dockerfile
+
+touch app.sh
+
+echo '#!/usr/bin/env bash' > app.sh
+echo 'linenum=$(($(cat /var/www/html/*.html -n | tail -1 | awk "{print \$1}") - 2))' >> app.sh
+
+echo 'sed -i "${linenum}i <p> This is the final exam submission of Robert Gallegos on May 13th </p>" /var/www/html/*.html' \
+>> app.sh
+
+echo 'sudo service ngninx restart' >> app.sh
+chmod +x app.sh
+EOF
+
+sudo chown -R alice:test_users /home/alice/docker_test
+
+sudo -u alice bash << 'EOF'
+cd /home/alice/docker_test
+
+git config user.name "Alice"
+git config user.email "alice1@madeupemail.com"
+git add Dockerfile app.sh
+git commit -m "New additions: Creation and manipulation of Dockerfile and app.sh"
+
+git log
+EOF
 
 
 
