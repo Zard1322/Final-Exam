@@ -48,4 +48,92 @@ echo "The file permission string of this script is: "
 
 ls -l "$0" | awk '{print $1}'
 
-echo "" 
+echo ""
+
+sudo apt update
+sudo apt install git -y
+
+echo ""
+
+# 2. Write the commands to do the following filesystem operations (150
+#    points)
+
+# a. Create two users : alice and bob and add them to a group called
+#    test_users
+#    After executing the commands, use sudo command to print the
+#    groups of alice and bob. (Remember to create each user with thier respective
+#    home directory)(20 points)
+
+sudo groupadd test_users
+
+sudo useradd -m -g test_users alice
+sudo useradd -m -g test_users bob
+
+sudo groups alice
+sudo groups bob 
+
+echo ""
+
+# b. Create the following three empty files and one directory inside /home/alice/
+#    alice.txt bob.txt both.txt
+#    docker_test/
+#    List the created files using list command (30 points)
+
+sudo touch /home/alice/{alice.txt,bob.txt,both.txt}
+
+sudo mkdir -p /home/alice/docker_test
+
+sudo ls -ld /home/alice/{alice.txt,bob.txt,both.txt,docker_test} 
+
+echo ""
+
+# c. Make alice the owner of the files alice.txt and both.txt
+#    Make bob the owner of bob.txt
+#    Change the effective groups of the directory to
+#    test_users (30 points)
+
+sudo chown alice:test_users /home/alice/{alice.txt,both.txt}
+
+sudo chown bob:test_users /home/alice/bob.txt
+
+sudo chgrp test_users /home/alice/docker_test
+
+ls -ld /home/alice/{alice.txt,bob.txt,both.txt,docker_test}
+
+echo ""
+
+# d. Write a sample line of text in alice.txt from alice's profile and using
+#    access control list, give bob permission to read and write the contents of alice.txt
+#    Print the current ACL for alice.txt and run cat on alice.txt from bob's
+#    profile (70 points)
+
+sudo apt install acl -y
+
+echo ""
+
+sudo -u alice bash -c "echo 'alice to bob. I repeat, alice to bob.' >> /home/alice/alice.txt"
+
+sudo setfacl -m u:bob:rw /home/alice/alice.txt
+
+getfacl /home/alice/alice.txt
+
+sudo -u bob cat /home/alice/alice.txt
+
+echo ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
